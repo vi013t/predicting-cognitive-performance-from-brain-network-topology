@@ -1,4 +1,3 @@
-from pingouin import correlation
 from data import CSV
 import os
 import numpy as np
@@ -36,29 +35,29 @@ def matrices(edges, performance, subject_count):
 
 
 def correlation_matrix(edges: np.ndarray[tuple[int, int, int]], performance: list[float]):
-	correlation = np.empty((100, 100))
-	for edge_x, edge_y in product(range(100), range(100)):
+	correlation = np.empty((edges.shape[0], edges.shape[1]))
+	for edge_x, edge_y in product(range(correlation.shape[0]), range(correlation.shape[1])):
 		correlation[edge_x][edge_y] = pearson_correlation(edges[edge_x][edge_y], performance)
 	return correlation
 
 
 def t_matrix(correlation: np.ndarray[tuple[int, int]], subject_count):
-	ts = np.empty((100, 100))
-	for edge_x, edge_y in product(range(100), range(100)):
+	ts = np.empty(correlation.shape)
+	for edge_x, edge_y in product(range(ts.shape[0]), range(ts.shape[1])):
 		ts[edge_x][edge_y] = t_statistic(correlation[edge_x][edge_y], subject_count)
 	return ts
 
 
 def p_matrix(t_matrix: np.ndarray[tuple[int, int]], subject_count):
-	ps = np.empty((100, 100))
-	for edge_x, edge_y in product(range(100), range(100)):
+	ps = np.empty(t_matrix.shape)
+	for edge_x, edge_y in product(range(ps.shape[0]), range(ps.shape[1])):
 		ps[edge_x][edge_y] = two_tailed_p_value(t_matrix[edge_x][edge_y], subject_count)
 	return ps
 
 
 def mask_matrix(p_matrix: np.ndarray[tuple[int, int]], alpha = 0.05):
-	mask = np.empty((100, 100))
-	for edge_x, edge_y in product(range(100), range(100)):
+	mask = np.empty(p_matrix.shape)
+	for edge_x, edge_y in product(range(mask.shape[0]), range(mask.shape[1])):
 		mask[edge_x][edge_y] = heaviside_step_function(alpha - p_matrix[edge_x][edge_y])
 	return mask
 

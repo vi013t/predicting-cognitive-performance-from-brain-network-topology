@@ -37,4 +37,4 @@ def t_statistic(r: float, n: float) -> float:
 
 
 def two_tailed_p_value(t_statistic: float, n: float) -> float:
-	return 2 * (1 - stats.t.cdf(abs(t_statistic), df = n - 2))
+	return 2 * (1 - float(stats.t.cdf(abs(t_statistic), df = n - 2)))
