@@ -2,14 +2,22 @@ from typing import Callable, Any
 import numpy as np
 
 
-def is_float(string: str) -> bool:
-	if '_' in string: 
-		return False
-	try:
-		float(string)
-		return True
-	except:
-		return False
+def try_float(string: str) -> str | float:
+	"""
+	Returns a basic check of whether the given string is a float. Rejects
+	strings with underscores.
+
+	# Parameters
+
+	- `string: str` - The string to check.
+
+	# Returns
+	
+	Whether the given string is a float.
+	"""
+	if '_' in string: return string
+	try: return float(string)
+	except: return string
 
 
 class CSVEntry:
@@ -29,9 +37,7 @@ class CSVEntry:
 
 	def __init__(self, categories: list[str], values: list[Any]):
 		self.categories = categories
-		self.values = values
-		if all(is_float(value) for value in self.values):
-			self.values = list(map(float, self.values))
+		self.values = list(map(try_float, values))
 
 	def __getitem__(self, name: str) -> Any:
 		return self.values[self.categories.index(name)]
@@ -46,6 +52,8 @@ class CSV:
 	"""
 	The raw data matrix of the CSV.
 	"""
+
+	entries: list[CSVEntry]
 
 	def __init__(self, filename: str, where: Callable[[CSVEntry], bool] = lambda _: True):
 		"""
@@ -68,3 +76,6 @@ class CSV:
 
 	def __getitem__(self, name: str) -> list[Any]:
 		return [entry[name] for entry in self.entries]
+
+	def __len__(self) -> int:
+		return len(self.entries)

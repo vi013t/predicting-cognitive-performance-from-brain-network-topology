@@ -5,6 +5,14 @@ This repository contains the traditional statistical analysis code for the paper
 
 `1000BRAINS` data used provided by Jung et al. on [EBRAINS](https://search.kg.ebrains.eu/instances/5802e695-98e7-463d-81bc-d7532a80777f) under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/legalcode).
 
+## Usage
+
+The dependencies of this code are managed by [uv](https://docs.astral.sh/uv). You can run the code yourself with:
+
+```bash
+uv run src/main.py
+```
+
 ## Citing
 
 **BibTex:**
@@ -21,3 +29,4 @@ This repository contains the traditional statistical analysis code for the paper
 **APA:**
 
 Iapalucci, V. Predicting Cognitive Performance from Brain Network Topology [Computer software]. https://github.com/vi013t/predicting-cognitive-performance-from-brain-network-topology
+

@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "numpy>=2.3.2",
+    "pingouin>=0.5.5",
 ]
 
 [tool.pyright]
