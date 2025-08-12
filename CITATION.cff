@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+title: >-
+  Predicting Cognitive Performance from Brain Network Topology
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Violet
+    family-names: Iapalucci
+    email: violet_iapalucci@outlook.com
+repository-code: >-
+  https://github.com/vi013t/predicting-cognitive-performance-from-brain-network-topology
+abstract: >-
+  Python code using traditional statistical analysis to find
+  correlation between brain network topology and cognitive
+  performance.
+license: CC-BY-NC-SA-4.0
