@@ -1,12 +1,18 @@
-from data import CSV
 import os
-import numpy as np
 from itertools import product
 
+import numpy as np
+from termcolor import colored
+
+from data import CSV
 from stats import heaviside_step_function, pearson_correlation, t_statistic, two_tailed_p_value
+from visualization import visualize_binary_matrix, visualize_matrix
 
 
 def main():
+	print()
+
+	print(colored("Reading", "green"), "demographic data... ", end="")
 	demographics = CSV("data/1000BRAINS/sourceFiles/demographics.csv", where = lambda entry: entry["ID"].endswith("1"))
 	subject_count = len(demographics)
 	processing_speed: list[float] = demographics["Processing_Speed_raw"]
@@ -17,16 +23,49 @@ def main():
 	for filename in filter(lambda file: file.endswith("1.csv"), os.listdir(connectomes_folder)):
 		connectome = np.loadtxt(f"{connectomes_folder}/{filename}", delimiter=",")
 		structural_connectomes.append(connectome)
+	
+	print(colored("Done!", "green"))
 
+	print(colored("Generating", "green"), "edge matrix... ", end="")
 	edges = np.empty((100, 100, subject_count))
 	for edge_x, edge_y in product(range(100), range(100)):
 		edges[edge_x][edge_y] = list(map(lambda matrix: matrix[edge_x][edge_y], structural_connectomes))
+	print(colored("Done!", "green"))
 
-	processing_matrices = matrices(edges, processing_speed, subject_count)
-	reasoning_matrices = matrices(edges, reasoning, subject_count)
+	visualize_matrices(
+		edges=edges, 
+		performance=processing_speed, 
+		name="Processing Speed", 
+		subject_count=subject_count, 
+		subscript="p"
+	)
+
+	visualize_matrices(
+		edges=edges, 
+		performance=reasoning, 
+		name="Reasoning", 
+		subject_count=subject_count, 
+		subscript="r"
+	)
 
 
-def matrices(edges, performance, subject_count):
+def visualize_matrices(edges, performance, name, subject_count, subscript):
+	print(colored("\nAnalyzing", "green"), "Processing_Speed_raw data...")
+	print(colored("\tGenerating", "green"), "matrices... ", end="")
+	matrices = generate_matrices(edges, performance, subject_count)
+	print(colored("Done!", "green"))
+
+	print(colored("\tVisualizing", "green"), "processing matrices... ", end="")
+	visualize_matrix(matrices[0], "processing_correlation", title = f"Correlation Matrix for {name} $M_{{c{subscript}}}$")
+	visualize_matrix(matrices[1], "processing_t_stats", title = f"T-Statistic Matrix for {name} Speed $M_{{t{subscript}}}$", vmin=-2, vmax=2)
+	visualize_matrix(matrices[2], "processing_p_scores", title = f"$p$-value Matrix for {name} Speed $M_{{p{subscript}}}$")
+	visualize_binary_matrix(matrices[3], "processing_mask", title = f"Masked Matrix for {name} Speed $M_{{m{subscript}}}$")
+	print(colored("Done!", "green"))
+
+	print(colored("Done!\n", "green"))
+
+
+def generate_matrices(edges, performance, subject_count):
 	correlation = correlation_matrix(edges, performance)
 	t_values = t_matrix(correlation, subject_count)
 	p_values = p_matrix(t_values, subject_count)
